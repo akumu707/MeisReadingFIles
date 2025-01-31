@@ -1,5 +1,6 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget, QStackedWidget
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget,
+                             QStackedWidget, QHBoxLayout, QLineEdit)
 
 import sqlite3
 
@@ -59,12 +60,29 @@ class PreviewScreen(QWidget):
         self.most_recent_label = QLabel()
         self.most_recent_label.setText("Most recent read:")
         self.most_recent_list = [QLabel() for _ in range(3)]
+
+        preview_bottom_layout = QHBoxLayout()
+        preview_bottom_left = QVBoxLayout()
+        preview_bottom_right = QVBoxLayout()
+        search_label = QLabel()
+        search_label.setText("Search: ")
+        self.search_input = QLineEdit()
+
         preview_layout = QVBoxLayout()
         preview_layout.addWidget(self.back_button, alignment=Qt.AlignmentFlag.AlignRight)
         preview_layout.addWidget(preview_label)
-        preview_layout.addWidget(self.most_recent_label)
+
+        preview_bottom_left.addWidget(self.most_recent_label)
         for i in range(3):
-            preview_layout.addWidget(self.most_recent_list[i])
+            preview_bottom_left.addWidget(self.most_recent_list[i])
+        preview_bottom_left.addWidget(QPushButton("More"))
+
+        preview_bottom_right.addWidget(search_label)
+        preview_bottom_right.addWidget(self.search_input, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        preview_bottom_layout.addLayout(preview_bottom_left)
+        preview_bottom_layout.addLayout(preview_bottom_right)
+        preview_layout.addLayout(preview_bottom_layout)
         self.screen = QWidget()
         self.screen.setLayout(preview_layout)
 
