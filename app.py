@@ -67,6 +67,8 @@ class PreviewScreen(QWidget):
         search_label = QLabel()
         search_label.setText("Search: ")
         self.search_input = QLineEdit()
+        self.search_input.textChanged.connect(self.update_search)
+        self.search_result_label = QLabel()
 
         preview_layout = QVBoxLayout()
         preview_layout.addWidget(self.back_button, alignment=Qt.AlignmentFlag.AlignRight)
@@ -79,6 +81,7 @@ class PreviewScreen(QWidget):
 
         preview_bottom_right.addWidget(search_label)
         preview_bottom_right.addWidget(self.search_input, alignment=Qt.AlignmentFlag.AlignCenter)
+        preview_bottom_right.addWidget(self.search_result_label)
 
         preview_bottom_layout.addLayout(preview_bottom_left)
         preview_bottom_layout.addLayout(preview_bottom_right)
@@ -90,6 +93,10 @@ class PreviewScreen(QWidget):
         result = cursor.execute("SELECT Name FROM books, read WHERE books.ISBN = read.ISBN ORDER BY end DESC")
         for i in range(3):
             self.most_recent_list[i].setText(str(i+1) + ". " + result.fetchone()[0])
+
+    def update_search(self, text):
+        result = cursor.execute(f"SELECT Name FROM books WHERE Name LIKE '%{text}%'")
+        self.search_result_label.setText(result.fetchone()[0])
 
 
 connection = sqlite3.connect("test.db")
